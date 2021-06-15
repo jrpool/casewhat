@@ -23,6 +23,11 @@ const requestOptions = {
     'X-RallyIntegrationVersion': '1.0.0'
   }
 };
+const restAPI = rally({
+  user: process.env.RALLY_USERNAME,
+  pass: process.env.RALLY_PASSWORD,
+  requestOptions
+});
 
 // ########## GLOBAL VARIABLES
 
@@ -31,7 +36,7 @@ const requestOptions = {
 // ==== OPERATION UTILITIES ====
 
 // Returns a Promise of a reference to a collection member.
-const getRef = (type, formattedID, restAPI) => {
+const getRef = (type, formattedID) => {
   if (formattedID) {
     const numericID = formattedID.replace(/^[A-Za-z]+/, '');
     if (/^\d+$/.test(numericID)) {
@@ -70,7 +75,7 @@ const getRef = (type, formattedID, restAPI) => {
 // Returns a string with its first character lower-cased.
 const lc0Of = string => string.length ? `${string[0].toLowerCase()}${string.slice(1)}` : '';
 // Returns a Promise of data on a work item.
-const getItemData = (ref, facts, collections, restAPI) => {
+const getItemData = (ref, facts, collections) => {
   if (ref) {
     // Get data on the facts and collections of the specified item.
     return restAPI.get({
@@ -110,7 +115,7 @@ const getItemData = (ref, facts, collections, restAPI) => {
   }
 };
 // Returns a Promise of data, i.e. an array of member objects, on a collection.
-const getCollectionData = (ref, facts, collections, restAPI) => {
+const getCollectionData = (ref, facts, collections) => {
   if (ref) {
     // Get data on the facts and collections of the members of the specified collection.
     return restAPI.get({
@@ -166,7 +171,7 @@ const getCollectionData = (ref, facts, collections, restAPI) => {
 };
 
 // Recursively copies descriptions of user stories to their test cases.
-const whatCases = (cases, restAPI) => {
+const whatCases = cases => {
   // If any test cases exist:
   if (cases.length) {
     // Identify the first test case.
@@ -176,7 +181,7 @@ const whatCases = (cases, restAPI) => {
     // If there is one:
     if (storyRef) {
       // Get its data.
-      getItemData(storyRef, ['Description'], [], restAPI)
+      getItemData(storyRef, ['Description'], [])
       .then(
         // When they arrive:
         data => {
@@ -191,7 +196,7 @@ const whatCases = (cases, restAPI) => {
             // When it has been copied:
             () => {
               // Process the remaining test cases.
-              whatCases(cases.slice(1), restAPI);
+              whatCases(cases.slice(1));
             },
             error => {
               console.log(error, 'copying user-story description');
@@ -210,23 +215,17 @@ const whatCases = (cases, restAPI) => {
   }
 };
 
-// Create and configure a Rally API client.
-const restAPI = rally({
-  user: process.env.RALLY_USERNAME,
-  pass: process.env.RALLY_PASSWORD,
-  requestOptions
-});
 // Get a reference to the specified test folder.
-getRef('TestFolder', process.argv[2], [], ['TestCases'])
+getRef('TestFolder', process.argv[2])
 .then(
   // When they arrive:
   folder => {
     // Get data on its test cases.
-    getCollectionData(folder.testCases.ref, [], [], restAPI)
+    getCollectionData(folder.testCases.ref, [], [])
     .then(
       // When they arrive:
       cases => {
-        whatCases(cases, restAPI);
+        whatCases(cases);
       },
       error => {
         console.log(error, 'getting data on test cases');
