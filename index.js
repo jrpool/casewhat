@@ -216,12 +216,12 @@ const whatCases = cases => {
 };
 
 // Get a reference to the specified test folder.
-getRef('TestFolder', process.argv[2])
+getRef('testfolder', process.argv[2])
 .then(
   // When they arrive:
   folder => {
     // Get data on its test cases.
-    getCollectionData(folder.testCases.ref, [], [])
+    getCollectionData(folder.ref, [], ['TestCases'])
     .then(
       // When they arrive:
       cases => {
