@@ -219,9 +219,9 @@ const whatCases = cases => {
 getRef('testfolder', process.argv[2])
 .then(
   // When they arrive:
-  folder => {
+  folderRef => {
     // Get data on its test cases.
-    getCollectionData(folder.ref, [], ['TestCases'])
+    getCollectionData(folderRef, [], ['TestCases'])
     .then(
       // When they arrive:
       cases => {
