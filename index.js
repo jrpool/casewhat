@@ -125,6 +125,7 @@ const getCollectionData = (ref, facts, collections) => {
     .then(
       // When the data arrive:
       collection => {
+        console.log(`collection is ${JSON.stringify(collection, null, 2)}`);
         const members = collection.Object.Results;
         // Initialize an array of data.
         const data = [];
@@ -218,17 +219,28 @@ const whatCases = cases => {
 // Get a reference to the specified test folder.
 getRef('testfolder', process.argv[2])
 .then(
-  // When they arrive:
+  // When it arrives:
   folderRef => {
-    // Get data on its test cases.
-    getCollectionData(folderRef, [], ['TestCases'])
+    // Get data on the test folder.
+    getItemData(folderRef, [], ['TestCases'])
     .then(
       // When they arrive:
-      cases => {
-        whatCases(cases);
+      data => {
+        // Get data on the test cases of the test folder.
+        getCollectionData(data.testCases.ref, [], [])
+        .then(
+          // When they arrive:
+          cases => {
+            // Copy the descriptions of the user stories to their test cases.
+            whatCases(cases);
+          },
+          error => {
+            console.log(error, 'getting data on test cases');
+          }
+        );
       },
       error => {
-        console.log(error, 'getting data on test cases');
+        console.log(error, 'getting data on test folder');
       }
     );
   },
