@@ -16,7 +16,7 @@ Create a file named `.env` in the project directory (a sibling of `index.js`).
 Populate the `.env` file with this content, replacing the text after the `=` symbol with your credentials.
 
 ```
-RALLY_USERNAME=your.rallyusername@cvshealth.com
+RALLY_USERNAME=your.rallyusername@yourdomain.tld
 RALLY_PASSWORD=YourRallyPassword
 ```
 Save the `.env` file.
