@@ -125,7 +125,6 @@ const getCollectionData = (ref, facts, collections) => {
     .then(
       // When the data arrive:
       collection => {
-        console.log(`collection is ${JSON.stringify(collection, null, 2)}`);
         const members = collection.Object.Results;
         // Initialize an array of data.
         const data = [];
@@ -227,7 +226,7 @@ getRef('testfolder', process.argv[2])
       // When they arrive:
       data => {
         // Get data on the test cases of the test folder.
-        getCollectionData(data.testCases.ref, [], [])
+        getCollectionData(data.testCases.ref, ['WorkProduct'], [])
         .then(
           // When they arrive:
           cases => {
