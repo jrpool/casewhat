@@ -118,14 +118,14 @@ const getItemData = (ref, facts, collections) => {
 const getCollectionData = (ref, facts, collections) => {
   if (ref) {
     // Get data on the facts and collections of the members of the specified collection.
-    return restAPI.get({
+    return restAPI.query({
       ref,
       fetch: facts.concat(collections)
     })
     .then(
       // When the data arrive:
       collection => {
-        const members = collection.Object.Results;
+        const members = collection.Results;
         // Initialize an array of data.
         const data = [];
         // For each member of the collection:
@@ -176,6 +176,7 @@ const whatCases = cases => {
   if (cases.length) {
     // Identify the first test case.
     const firstCase = cases[0];
+    console.log(`Processing ${firstCase.formattedID}`);
     // Get the user story that it belongs to.
     const storyRef = firstCase.workProduct;
     // If there is one:
@@ -225,11 +226,13 @@ getRef('testfolder', process.argv[2])
     .then(
       // When they arrive:
       data => {
+        console.log(`Ref of test-case collection in ${data.testCases.ref}`);
         // Get data on the test cases of the test folder.
-        getCollectionData(data.testCases.ref, ['WorkProduct'], [])
+        getCollectionData(data.testCases.ref, ['WorkProduct', 'FormattedID'], [])
         .then(
           // When they arrive:
           cases => {
+            console.log(`Cases in ${process.argv[2]}: ${cases.length}`);
             // Copy the descriptions of the user stories to their test cases.
             whatCases(cases);
           },
