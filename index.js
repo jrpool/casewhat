@@ -120,6 +120,7 @@ const getCollectionData = (ref, facts, collections) => {
     // Get data on the facts and collections of the members of the specified collection.
     return restAPI.query({
       ref,
+      limit: Infinity,
       fetch: facts.concat(collections)
     })
     .then(
